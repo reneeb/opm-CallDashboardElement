@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<otrs_package version="1.0">
+    <!-- GENERATED WITH OTRS::OPM::Maker::Command::sopm (1.29) -->
+    <Name>CallDashboardElement</Name>
+    <Version>4.0.1</Version>
+    <Framework>4.0.x</Framework>
+    <Vendor>Perl-Services.de</Vendor>
+    <URL>http://www.perl-services.de</URL>
+    <Description Lang="de">Rufe ein einzelnes Dashboardelement auf</Description>
+    <Description Lang="en">Call a single dashboard element</Description>
+    <License>GNU AFFERO GENERAL PUBLIC LICENSE Version 3, November 2007</License>
+    <Filelist>
+        <File Permission="644" Location="Custom/Kernel/Modules/AgentCallDashboardElement.pm" />
+        <File Permission="644" Location="Kernel/Config/Files/CallDashboardElement.xml" />
+        <File Permission="644" Location="doc/CallDashboardElement.json" />
+        <File Permission="644" Location="doc/en/CallDashboardElement.pod" />
+    </Filelist>
+</otrs_package>
