@@ -1,5 +1,5 @@
 {
-    "name": "ExportTicketOverview",
+    "name": "CallDashboardElement",
     "version": "4.0.1",
     "framework": [
         "4.0.x"
@@ -10,7 +10,7 @@
     },
     "license": "GNU AFFERO GENERAL PUBLIC LICENSE Version 3, November 2007",
     "description" : {
-        "en": "Provide 'export' dropdown in TicketOverviews",
-        "de": "Stellt ein 'Export'-Dropdown in Ticketuebersichten zur Verfuegung"
+        "en": "Call a single dashboard element",
+        "de": "Rufe ein einzelnes Dashboardelement auf"
     }
 }
