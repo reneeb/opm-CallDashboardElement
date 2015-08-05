@@ -1,0 +1,23 @@
+=head1 NAME
+
+CallDashboardElement
+
+=head1 DESCRIPTION
+
+Allows to call a single Dashboard element. For simple HTML output, you could use frameworks'
+AgentDashboard module. But if your Dashboard widgets provide any other output format, you have
+to use this addon.
+
+=head1 CODEREPOSITORY AND BUGTRACKER
+
+A coderepository and the bugtracker are available at L<https://github.com/reneeb/otrs-CallDashboardElement/>.
+
+=head1 AUTHOR AND LICENSE
+
+This package was written by Renee Baecker E<lt>otrs@perl-services.deE<gt>.
+
+The package is licensed unter AGPL. If you
+did not receive this file, see L<http://www.gnu.org/licenses/agpl.txt>.
+
+=cut
+
