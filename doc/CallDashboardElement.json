@@ -1,8 +1,8 @@
 {
     "name": "CallDashboardElement",
-    "version": "4.0.1",
+    "version": "5.0.1",
     "framework": [
-        "4.0.x"
+        "5.0.x"
     ],
     "vendor": {
         "name":  "Perl-Services.de",
