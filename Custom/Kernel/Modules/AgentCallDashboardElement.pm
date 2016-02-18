@@ -1,6 +1,6 @@
 # --
 # Kernel/Modules/AgentCallDashboardElement.pm
-# Copyright (C) 2015 Perl-Services.de, http://perl-services.de
+# Copyright (C) 2015 - 2016 Perl-Services.de, http://perl-services.de
 # --
 # This software comes with ABSOLUTELY NO WARRANTY. For details, see
 # the enclosed file COPYING for license information (AGPL). If you
@@ -12,10 +12,8 @@ package Kernel::Modules::AgentCallDashboardElement;
 use strict;
 use warnings;
 
-use Kernel::System::CustomerCompany;
-use Kernel::System::DynamicField;
-use Kernel::System::DynamicField::Backend;
 use Kernel::System::VariableCheck qw(:all);
+use Kernel::System::ObjectManager;
 
 our $ObjectManagerDisabled = 1;
 
@@ -25,46 +23,6 @@ sub new {
     # allocate new hash for object
     my $Self = {%Param};
     bless( $Self, $Type );
-
-    # check needed objects
-    for (qw(ParamObject DBObject LayoutObject LogObject ConfigObject MainObject EncodeObject)) {
-        if ( !$Self->{$_} ) {
-            $Self->{LayoutObject}->FatalError( Message => "Got no $_!" );
-        }
-    }
-
-    $Self->{CacheObject}           = $Kernel::OM->Get('Kernel::System::Cache');
-    $Self->{CustomerCompanyObject} = Kernel::System::CustomerCompany->new(%Param);
-
-    $Self->{SlaveDBObject}     = $Self->{DBObject};
-    $Self->{SlaveTicketObject} = $Self->{TicketObject};
-
-    # use a slave db to search dashboard date
-    if ( $Self->{ConfigObject}->Get('Core::MirrorDB::DSN') ) {
-
-        $Self->{SlaveDBObject} = Kernel::System::DB->new(
-            LogObject    => $Param{LogObject},
-            ConfigObject => $Param{ConfigObject},
-            MainObject   => $Param{MainObject},
-            EncodeObject => $Param{EncodeObject},
-            DatabaseDSN  => $Self->{ConfigObject}->Get('Core::MirrorDB::DSN'),
-            DatabaseUser => $Self->{ConfigObject}->Get('Core::MirrorDB::User'),
-            DatabasePw   => $Self->{ConfigObject}->Get('Core::MirrorDB::Password'),
-        );
-
-        if ( $Self->{SlaveDBObject} ) {
-
-            $Self->{SlaveTicketObject} = Kernel::System::Ticket->new(
-                %Param,
-                DBObject => $Self->{SlaveDBObject},
-            );
-        }
-    }
-
-    # create extra needed objects
-    $Self->{DynamicFieldObject} = Kernel::System::DynamicField->new(%Param);
-    $Self->{BackendObject}      = Kernel::System::DynamicField::Backend->new(%Param);
-    $Self->{StatsObject}        = Kernel::System::Stats->new(%Param);
 
     return $Self;
 }
@@ -77,14 +35,19 @@ sub Run {
     my $UserSettingsKey   = 'UserDashboard';
 
     # load backends
-    my $Config = $Self->{ConfigObject}->Get($BackendConfigKey);
+    my $ConfigObject       = $Kernel::OM->Get('Kernel::Config');
+    my $LayoutObject       = $Kernel::OM->Get('Kernel::Output::HTML::Layout');
+    my $ParamObject        = $Kernel::OM->Get('Kernel::System::Web::Request');
+    my $DynamicFieldObject = $Kernel::OM->Get('Kernel::System::DynamicField');
+
+    my $Config = $ConfigObject->Get($BackendConfigKey);
     if ( !$Config ) {
-        return $Self->{LayoutObject}->ErrorScreen(
+        return $LayoutObject->ErrorScreen(
             Message => 'No such config for ' . $BackendConfigKey,
         );
     }
 
-    my $Name = $Self->{ParamObject}->GetParam( Param => 'Name' );
+    my $Name = $ParamObject->GetParam( Param => 'Name' );
 
     # get the column filters from the web request
     my %ColumnFilter;
@@ -96,7 +59,7 @@ sub Run {
         qw(Owner Responsible State Queue Priority Type Lock Service SLA CustomerID CustomerUserID)
         )
     {
-        my $FilterValue = $Self->{ParamObject}->GetParam( Param => 'ColumnFilter' . $ColumnName . $Name )
+        my $FilterValue = $ParamObject->GetParam( Param => 'ColumnFilter' . $ColumnName . $Name )
             || '';
         next COLUMNNAME if $FilterValue eq '';
 
@@ -115,7 +78,7 @@ sub Run {
     }
 
     # get all dynamic fields
-    $Self->{DynamicField} = $Self->{DynamicFieldObject}->DynamicFieldListGet(
+    $Self->{DynamicField} = $DynamicFieldObject->DynamicFieldListGet(
         Valid      => 1,
         ObjectType => ['Ticket'],
     );
@@ -125,7 +88,7 @@ sub Run {
         next DYNAMICFIELD if !IsHashRefWithData($DynamicFieldConfig);
         next DYNAMICFIELD if !$DynamicFieldConfig->{Name};
 
-        my $FilterValue = $Self->{ParamObject}->GetParam(
+        my $FilterValue = $ParamObject->GetParam(
             Param => 'ColumnFilterDynamicField_' . $DynamicFieldConfig->{Name} . $Name
         );
 
@@ -139,12 +102,33 @@ sub Run {
         $GetColumnFilterSelect{ 'DynamicField_' . $DynamicFieldConfig->{Name} } = $FilterValue;
     }
 
-    my $SortBy  = $Self->{ParamObject}->GetParam( Param => 'SortBy' );
-    my $OrderBy = $Self->{ParamObject}->GetParam( Param => 'OrderBy' );
+    my $SortBy  = $ParamObject->GetParam( Param => 'SortBy' );
+    my $OrderBy = $ParamObject->GetParam( Param => 'OrderBy' );
+
+    my $DBObject     = $Kernel::OM->Get('Kernel::System::DB');
+    my $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
+
+    # use a slave db to search dashboard date
+    if ( $ConfigObject->Get('Core::MirrorDB::DSN') ) {
+
+        local $Kernel::OM = Kernel::System::ObjectManager->new(
+            'Kernel::System::DB' => {
+                DatabaseDSN  => $ConfigObject->Get('Core::MirrorDB::DSN'),
+                DatabaseUser => $ConfigObject->Get('Core::MirrorDB::User'),
+                DatabasePw   => $ConfigObject->Get('Core::MirrorDB::Password'),
+            },
+        );
+
+        $DBObject     = $Kernel::OM->Get('Kernel::System::DB');
+        $TicketObject = $Kernel::OM->Get('Kernel::System::Ticket');
+    }
+
 
     my %Element = $Self->_Element(
         Name                  => $Name,
         Configs               => $Config,
+        TicketObject          => $TicketObject,
+        DBObject              => $DBObject,
         AJAX                  => 1,
         SortBy                => $SortBy,
         OrderBy               => $OrderBy,
@@ -154,14 +138,14 @@ sub Run {
     );
 
     if ( !%Element ) {
-        $Self->{LayoutObject}->FatalError(
+        $LayoutObject->FatalError(
             Message => "Can't get element data of $Name!",
         );
     }
 
-    return $Self->{LayoutObject}->Attachment(
+    return $LayoutObject->Attachment(
         ContentType => 'text/html',
-        Charset     => $Self->{LayoutObject}->{UserCharset},
+        Charset     => $LayoutObject->{UserCharset},
         %{ $Element{Header} || {} },
         Content     => ${ $Element{Content} },
         NoCache     => 1,
@@ -170,6 +154,8 @@ sub Run {
 
 sub _Element {
     my ( $Self, %Param ) = @_;
+
+    my $MainObject = $Kernel::OM->Get('Kernel::System::Main');
 
     my $Name                  = $Param{Name};
     my $Configs               = $Param{Configs};
@@ -197,11 +183,12 @@ sub _Element {
 
     # load backends
     my $Module = $Configs->{$Name}->{Module};
-    return if !$Self->{MainObject}->Require($Module);
+    return if !$MainObject->Require($Module);
+
     my $Object = $Module->new(
         %{$Self},
-        DBObject              => $Self->{SlaveDBObject},
-        TicketObject          => $Self->{SlaveTicketObject},
+        DBObject              => $Param{DBObject},
+        TicketObject          => $Param{TicketObject},
         Config                => $Configs->{$Name},
         Name                  => $Name,
         CustomerID            => $Self->{CustomerID} || '',
