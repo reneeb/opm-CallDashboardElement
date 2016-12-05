@@ -1,0 +1,32 @@
+=encoding utf-8
+
+=head1 NÉV
+
+CallDashboardElement - egy önálló vezérlőpultelem meghívása
+
+=head1 LEÍRÁS
+
+Lehetővé teszi egy önálló vezérlőpultelem meghívását. Az egyszerű HTML 
+kimenethez használható a keretrendszer „AgentDashboard” modulja. De ha a 
+vezérlőpult felületi elemek bármilyen más kimeneti formátumot szolgáltatnak, 
+akkor ezt a kiegészítőt kell használnia.
+
+=head1 KÓDTÁROLÓ ÉS HIBAKÖVETŐ
+
+A kódtároló és a hibakövető a L<https://github.com/reneeb/otrs-CallDashboardElement/> 
+címen érhető el.
+
+=head1 SZERZŐ ÉS LICENC
+
+Ezt a csomagot Renée Bäcker E<lt>otrs@perl-services.deE<gt> írta.
+
+A csomag az AGPL 3.0 feltételei szerint licencelt. Ha nem kapta meg ezt a 
+fájlt, akkor elolvashatja a L<http://www.gnu.org/licenses/agpl.txt> címen.
+
+=head1 MAGYAR FORDÍTÁS
+
+A magyar fordítást az OTRS-megoldások csapata készítette.
+Copyright (C) 2016 Úr Balázs, L<http://otrs-megoldasok.hu>
+
+=cut
+
