@@ -16,7 +16,7 @@ A coderepository and the bugtracker are available at L<https://github.com/reneeb
 
 This package was written by Renee Baecker E<lt>otrs@perl-services.deE<gt>.
 
-The package is licensed unter AGPL. If you
+The package is licensed under AGPL 3.0. If you
 did not receive this file, see L<http://www.gnu.org/licenses/agpl.txt>.
 
 =cut

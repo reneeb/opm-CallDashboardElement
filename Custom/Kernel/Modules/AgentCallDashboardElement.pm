@@ -12,6 +12,7 @@ package Kernel::Modules::AgentCallDashboardElement;
 use strict;
 use warnings;
 
+use Kernel::Language qw(Translatable);
 use Kernel::System::VariableCheck qw(:all);
 use Kernel::System::ObjectManager;
 
@@ -43,7 +44,8 @@ sub Run {
     my $Config = $ConfigObject->Get($BackendConfigKey);
     if ( !$Config ) {
         return $LayoutObject->ErrorScreen(
-            Message => 'No such config for ' . $BackendConfigKey,
+            Message => $LayoutObject->{LanguageObject}->Translate( 'No such config for %s.', $BackendConfigKey ),
+            Comment => Translatable('Please contact the administrator.'),
         );
     }
 
@@ -139,7 +141,8 @@ sub Run {
 
     if ( !%Element ) {
         $LayoutObject->FatalError(
-            Message => "Can't get element data of $Name!",
+            Message => $LayoutObject->{LanguageObject}->Translate( 'Can\'t get element data of %s!', $Name ),
+            Comment => Translatable('Please contact the administrator.'),
         );
     }
 
