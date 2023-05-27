@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <otrs_package version="1.0">
-    <!-- GENERATED WITH OPM::Maker::Command::sopm (1.1.0) -->
+    <!-- GENERATED WITH OPM::Maker::Command::sopm (1.1.1) -->
     <Name>CallDashboardElement</Name>
-    <Version>6.0.2</Version>
+    <Version>6.0.3</Version>
     <Framework>6.0.x</Framework>
     <Framework>6.1.x</Framework>
     <Framework>6.2.x</Framework>
     <Framework>6.3.x</Framework>
+    <Framework>6.4.x</Framework>
+    <Framework>6.5.x</Framework>
+    <Framework>7.0.x</Framework>
     <Vendor>Perl-Services.de</Vendor>
     <URL>https://www.perl-services.de</URL>
     <Description Lang="de">Rufe ein einzelnes Dashboardelement auf.</Description>
@@ -18,7 +21,6 @@
         <File Permission="644" Location="Kernel/Config/Files/XML/CallDashboardElement.xml" />
         <File Permission="644" Location="Kernel/Language/de_CallDashboardElement.pm" />
         <File Permission="644" Location="Kernel/Language/hu_CallDashboardElement.pm" />
-        <File Permission="644" Location="doc/CallDashboardElement.json" />
         <File Permission="644" Location="doc/en/CallDashboardElement.pod" />
         <File Permission="644" Location="doc/hu/CallDashboardElement.pod" />
     </Filelist>

@@ -1,11 +1,14 @@
 {
     "name": "CallDashboardElement",
-    "version": "6.0.2",
+    "version": "6.0.3",
     "framework": [
         "6.0.x",
         "6.1.x",
         "6.2.x",
-        "6.3.x"
+        "6.3.x",
+        "6.4.x",
+        "6.5.x",
+        "7.0.x"
     ],
     "vendor": {
         "name": "Perl-Services.de",
@@ -16,5 +19,8 @@
         "en": "Call a single dashboard element.",
         "de": "Rufe ein einzelnes Dashboardelement auf.",
         "hu": "Egy önálló vezérlőpultelem meghívása."
-    }
+    },
+    "exclude_files" : [
+        "doc/CallDashboardElement.json"
+    ]
 }
